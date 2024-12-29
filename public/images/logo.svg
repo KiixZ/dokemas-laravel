@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="250" cy="250" r="240" fill="#ffffff"/>
+    
+    <!-- Mountain Background (like Gunung Slamet) -->
+    <path d="M250 100 L50 400 L450 400 Z" fill="#333333"/>
+    
+    <!-- Green Field -->
+    <path d="M50 400 L450 400 L450 450 L50 450 Z" fill="#009B4C"/>
+    
+    <!-- Rice Field Pattern (Yellow) -->
+    <g transform="translate(100, 300)">
+        <path d="M0 0 L300 0 L300 50 L0 50 Z" fill="#FFD700"/>
+        <path d="M50 10 L250 10" stroke="white" stroke-width="2"/>
+        <path d="M50 20 L250 20" stroke="white" stroke-width="2"/>
+        <path d="M50 30 L250 30" stroke="white" stroke-width="2"/>
+        <path d="M50 40 L250 40" stroke="white" stroke-width="2"/>
+    </g>
+    
+    <!-- Left Decorative Leaf (Yellow) -->
+    <path d="M60 150 C60 150, 100 100, 150 150" fill="none" stroke="#FFD700" stroke-width="10"/>
+    
+    <!-- Right Decorative Leaf (Green with Red Berries) -->
+    <path d="M350 150 C350 150, 400 100, 440 150" fill="none" stroke="#009B4C" stroke-width="10"/>
+    <circle cx="400" cy="130" r="5" fill="#FF0000"/>
+    <circle cx="420" cy="140" r="5" fill="#FF0000"/>
+    
+    <!-- Text Banner -->
+    <path d="M100 420 L400 420 L380 450 L120 450 Z" fill="#FF0000"/>
+    <text x="250" y="442" text-anchor="middle" fill="white" font-family="Arial Black" font-size="24">DOKEMAS</text>
+    
+    <!-- Bottom Text -->
+    <path id="curve" d="M100,470 C 200,490 300,490 400,470" fill="none"/>
+    <text font-family="Arial" font-size="16" fill="#333333">
+        <textPath href="#curve" startOffset="50%" text-anchor="middle">
+            BANYUMAS
+        </textPath>
+    </text>
+</svg>
