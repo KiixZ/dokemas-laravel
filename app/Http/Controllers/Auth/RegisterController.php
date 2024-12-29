@@ -15,7 +15,7 @@ class RegisterController extends Controller
 {
     use RegistersUsers;
 
-    protected $redirectTo = '/';
+    protected $redirectTo = '/login';
 
     public function __construct()
     {
@@ -36,7 +36,7 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']), // Added Hash::make for password hashing
+            'password' => Hash::make($data['password']),
             'role' => 'user',
         ]);
     }
@@ -45,7 +45,7 @@ class RegisterController extends Controller
     {
         Auth::logout();
         return redirect()->route('login')
-            ->with('success', 'Akun berhasil dibuat. Silakan verifikasi email Anda terlebih dahulu sebelum login.');
+            ->with('success', 'Anda sudah berhasil daftar. Silakan periksa email Anda untuk verifikasi.');
     }
 }
 

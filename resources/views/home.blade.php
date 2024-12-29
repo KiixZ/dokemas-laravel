@@ -49,7 +49,7 @@
         <div class="col-lg-6 order-lg-2 order-1" data-aos="fade-left">
             <h1 class="display-4 fw-bold mb-4">Kamu punya tempat wisata?</h1>
             <p class="lead mb-4">
-                Apakah kalian punya tempat wisata ? Bingung mau promosi dimana ? Di DOKEMAS kalian bisa mempromosikan tempat wisata kalian agar lebih dikenal oleh masyarakat luas.
+            apakah kalian punya tempat wisata didaerah banyumas dan sekitarnya? bingung mau promosiin dimana?DOKEMAS solusinya, kalian bisa mempromosikan tempat wisata kalian agar lebih dikenal oleh masyarakat luas.
             </p>
             <a href="{{ route('newsletter.form') }}" class="btn btn-primary btn-lg px-4">Daftar Disini</a>
         </div>
