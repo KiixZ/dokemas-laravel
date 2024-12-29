@@ -9,7 +9,7 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.destinations.update', $destination) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.destinations.edit', $destination) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
@@ -52,7 +52,7 @@
                         @enderror
                         @if($destination->image)
                             <div class="mt-2">
-                                <img src="{{ asset('storage/' . $destination->image) }}" alt="{{ $destination->name }}" class="img-thumbnail" style="max-width: 200px;">
+                                <img src="{{ asset('public/storage/' . $destination->image) }}" alt="{{ $destination->name }}" class="img-thumbnail" style="max-width: 200px;">
                             </div>
                         @endif
                     </div>

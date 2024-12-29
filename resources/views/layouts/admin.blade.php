@@ -311,7 +311,7 @@
                     </div>
                 </div>
             </div>
-
+            @if(Auth::user()->role === 'admin')
             <div class="nav-section">
                 <h6 class="section-title">ADMIN</h6>
                 <div class="nav-item">
@@ -327,7 +327,7 @@
                     </a>
                 </div>
             </div>
-
+            @endif
             <div class="nav-section mt-auto">
                 <div class="nav-item">
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">

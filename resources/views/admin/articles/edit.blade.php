@@ -34,7 +34,7 @@
                         @enderror
                         @if($article->image)
                             <div class="mt-2">
-                                <img src="{{ asset('storage/' . $article->image) }}" alt="{{ $article->title }}" class="img-thumbnail" style="max-width: 200px;">
+                                <img src="{{ asset('public/storage/' . $article->image) }}" alt="{{ $article->title }}" class="img-thumbnail" style="max-width: 200px;">
                             </div>
                         @endif
                     </div>

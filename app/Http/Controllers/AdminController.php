@@ -13,22 +13,29 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:admin,staff']);
+    }
+
     public function dashboard()
     {
         $userCount = User::count();
         $articleCount = Article::count();
         $destinationCount = Destination::count();
-        $visitorCount = 0; // Implementasi penghitung pengunjung bisa ditambahkan nanti
+        $visitorCount = User::sum('visitor_count');
 
         return view('admin.dashboard', compact('userCount', 'articleCount', 'destinationCount', 'visitorCount'));
     }
 
+    // Destinations Methods
     public function destinationsIndex()
     {
-        $destinations = Destination::with('category')->paginate(10);
+        $destinations = Destination::with(['category', 'user'])->paginate(10);
         return view('admin.destinations.index', compact('destinations'));
     }
 
@@ -61,6 +68,7 @@ class AdminController extends Controller
         try {
             $imagePath = $request->file('image')->store('destinations', 'public');
             $validatedData['image'] = $imagePath;
+            $validatedData['user_id'] = Auth::id(); // Add user_id to track ownership
 
             Log::info('Main image stored: ' . $imagePath);
 
@@ -89,9 +97,17 @@ class AdminController extends Controller
         }
     }
 
+    public function editDestination(Destination $destination)
+    {
+        $this->authorize('update', $destination);
+        $categories = Category::all();
+        return view('admin.destinations.edit', compact('destination', 'categories'));
+    }
 
     public function updateDestination(Request $request, Destination $destination)
     {
+        $this->authorize('update', $destination);
+
         $validatedData = $request->validate([
             'name' => 'required|max:255',
             'description' => 'required',
@@ -127,18 +143,30 @@ class AdminController extends Controller
             ->with('success', 'Destination updated successfully.');
     }
 
-
-
     public function destroyDestination(Destination $destination)
     {
+        // Check if user has permission to delete this destination
+        if (!Auth::user()->isAdmin() && Auth::id() !== $destination->user_id) {
+            return redirect()->route('admin.destinations.index')
+                ->with('error', 'You do not have permission to delete this destination.');
+        }
+
         if ($destination->image) {
             Storage::delete(str_replace('/storage', 'public', $destination->image));
         }
+        
+        if (!empty($destination->gallery)) {
+            foreach ($destination->gallery as $image) {
+                Storage::delete(str_replace('/storage', 'public', $image));
+            }
+        }
+        
         $destination->delete();
 
-        return redirect()->route('admin.destinations.index')->with('success', 'Destinasi berhasil dihapus.');
+        return redirect()->route('admin.destinations.index')->with('success', 'Destination deleted successfully.');
     }
 
+    // Rest of the controller methods remain unchanged...
     public function categoriesIndex()
     {
         $categories = Category::withCount('destinations')->paginate(10);
@@ -161,7 +189,7 @@ class AdminController extends Controller
 
         Category::create($validatedData);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
     }
 
     public function editCategory(Category $category)
@@ -180,18 +208,19 @@ class AdminController extends Controller
 
         $category->update($validatedData);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
 
     public function destroyCategory(Category $category)
     {
         if ($category->destinations()->count() > 0) {
-            return redirect()->route('admin.categories.index')->with('error', 'Kategori tidak dapat dihapus karena masih memiliki destinasi terkait.');
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'Cannot delete category with existing destinations.');
         }
 
         $category->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
     }
 
     public function articlesIndex()
@@ -220,7 +249,7 @@ class AdminController extends Controller
 
         Article::create($validatedData);
 
-        return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil ditambahkan.');
+        return redirect()->route('admin.articles.index')->with('success', 'Article created successfully.');
     }
 
     public function editArticle(Article $article)
@@ -246,7 +275,7 @@ class AdminController extends Controller
 
         $article->update($validatedData);
 
-        return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil diperbarui.');
+        return redirect()->route('admin.articles.index')->with('success', 'Article updated successfully.');
     }
 
     public function destroyArticle(Article $article)
@@ -256,7 +285,7 @@ class AdminController extends Controller
         }
         $article->delete();
 
-        return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil dihapus.');
+        return redirect()->route('admin.articles.index')->with('success', 'Article deleted successfully.');
     }
 
     public function usersIndex()
@@ -314,13 +343,15 @@ class AdminController extends Controller
     public function destroyUser(User $user)
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('admin.users.index')->with('error', 'You cannot delete your own account.');
+            return redirect()->route('admin.users.index')
+                ->with('error', 'You cannot delete your own account.');
         }
 
         $user->delete();
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
+
     public function staffRegistrations()
     {
         $staffRegistrations = NewsletterSubscriber::orderBy('created_at', 'desc')->paginate(10);
@@ -344,7 +375,8 @@ class AdminController extends Controller
 
         // TODO: Send email notification to the approved staff with login instructions
 
-        return redirect()->route('admin.staff-registrations')->with('success', 'Staff registration approved successfully.');
+        return redirect()->route('admin.staff-registrations')
+            ->with('success', 'Staff registration approved successfully.');
     }
 
     public function rejectStaff($id)
@@ -354,7 +386,8 @@ class AdminController extends Controller
 
         // TODO: Send rejection email notification
 
-        return redirect()->route('admin.staff-registrations')->with('success', 'Staff registration rejected.');
+        return redirect()->route('admin.staff-registrations')
+            ->with('success', 'Staff registration rejected.');
     }
 }
 

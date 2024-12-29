@@ -7,6 +7,8 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class VerificationController extends Controller
 {
@@ -16,26 +18,28 @@ class VerificationController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth')->except(['verify']);
         $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
 
     public function verify(Request $request)
     {
-        $user = \App\Models\User::find($request->route('id'));
+        $user = User::find($request->route('id'));
+
+        if (!$user) {
+            Log::error('User not found during email verification', ['user_id' => $request->route('id')]);
+            return redirect($this->redirectPath())->with('error', 'User tidak ditemukan.');
+        }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect($this->redirectPath());
+            return redirect($this->redirectPath())->with('warning', 'Email sudah diverifikasi sebelumnya.');
         }
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
 
-        Auth::logout();
-
-        return redirect($this->redirectPath())->with('verified', true);
+        return redirect($this->redirectPath())->with('status', 'Email berhasil diverifikasi. Silakan login.');
     }
 
     protected function redirectTo()

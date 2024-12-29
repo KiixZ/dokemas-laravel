@@ -34,12 +34,17 @@ class LoginController extends Controller
                 return 'unverified';
             }
 
+            Log::info('Attempting password check', ['user_id' => $user->id]);
             if (Hash::check($credentials['password'], $user->password)) {
                 Auth::login($user, $request->filled('remember'));
                 Log::info('Login successful', ['user_id' => $user->id]);
                 return true;
             } else {
-                Log::info('Password mismatch', ['user_id' => $user->id]);
+                Log::info('Password mismatch', [
+                    'user_id' => $user->id,
+                    'provided_password' => $credentials['password'],
+                    'stored_password_hash' => $user->password
+                ]);
                 return 'invalid';
             }
         } else {
@@ -64,20 +69,9 @@ class LoginController extends Controller
                 ->withErrors([
                     $this->username() => [trans('auth.failed')],
                 ]);
-        } elseif ($result === true) {
-            return redirect()->intended($this->redirectPath());
         }
 
         return $this->sendLockoutResponse($request);
-    }
-
-    protected function authenticated(Request $request, $user)
-    {
-        if ($user) {
-            Log::info('Login successful and email verified', ['user_id' => $user->id]);
-        } else {
-            Log::error('Authenticated method called with null user');
-        }
     }
 
     public function login(Request $request)
@@ -99,33 +93,6 @@ class LoginController extends Controller
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
-    }
-
-    public function logout(Request $request)
-    {
-        $this->guard()->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    }
-
-    protected function sendLockoutResponse(Request $request)
-    {
-        $seconds = $this->limiter()->availableIn(
-            $this->throttleKey($request)
-        );
-
-        return redirect()->route('login')
-            ->withInput($request->only($this->username(), 'remember'))
-            ->withErrors([
-                $this->username() => [trans('auth.throttle', [
-                    'seconds' => $seconds,
-                    'minutes' => ceil($seconds / 60),
-                ])],
-            ]);
     }
 }
 

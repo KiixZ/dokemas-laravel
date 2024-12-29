@@ -45,7 +45,7 @@
                 <a href="{{ route('explore.show', $destination->slug) }}" class="text-decoration-none text-reset">
                     <div class="card h-100 clickable-card">
                         <div class="card-img-wrapper">
-                            <img src="{{ asset('storage/' . $destination->image) }}" 
+                            <img src="{{ asset('public/storage/' . $destination->image) }}" 
                                  alt="{{ $destination->name }}" 
                                  class="card-img-top">
                         </div>

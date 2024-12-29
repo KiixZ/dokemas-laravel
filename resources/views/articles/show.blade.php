@@ -1,73 +1,116 @@
 @extends('layouts.app')
 
-@section('title', $article->title)
+@section('title', $article->title . ' - Tourism App')
 
 @section('content')
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                @if($article->image)
-                    <img src="{{ asset('storage/' . $article->image) }}" class="card-img-top" alt="{{ $article->title }}">
-                @endif
+                <img src="{{ asset('public/storage/' . $article->image) }}" 
+                     class="card-img-top article-detail-img" 
+                     alt="{{ $article->title }}"
+                     onerror="this.src='{{ asset('images/placeholder.jpg') }}'">
+                     
                 <div class="card-body">
                     <h1 class="card-title">{{ $article->title }}</h1>
-                    <div class="card-text">{!! $article->content !!}</div>
                     
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="text-muted">
+                            <small>By {{ $article->user->name }}</small>
+                        </div>
+                        <div class="text-muted">
+                            <small>{{ $article->created_at->format('F d, Y') }}</small>
+                        </div>
+                    </div>
+
+                    <div class="article-content">
+                        {{ $article->content }}
+                    </div>
+
                     @if($article->ratings->count() > 0)
-                        <div class="mb-3">
-                            <h5>Average Rating</h5>
-                            <p>{{ number_format($article->ratings->avg('rating'), 1) }} / 5 ({{ $article->ratings->count() }} ratings)</p>
+                        <div class="mt-4">
+                            <h5>Rating Average: {{ number_format($article->ratings->avg('rating'), 1) }}/5</h5>
+                            <div class="star-rating">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= round($article->ratings->avg('rating')))
+                                        <i class="fas fa-star text-warning"></i>
+                                    @else
+                                        <i class="far fa-star text-warning"></i>
+                                    @endif
+                                @endfor
+                                <span class="ms-2 text-muted">({{ $article->ratings->count() }} ratings)</span>
+                            </div>
                         </div>
                     @endif
 
                     @auth
-                        <form action="{{ route('articles.rate', $article) }}" method="POST" class="mb-3">
-                            @csrf
-                            <div class="form-group">
-                                <label for="rating">Rate this article:</label>
-                                <select name="rating" id="rating" class="form-control">
-                                    <option value="1">1 - Poor</option>
-                                    <option value="2">2 - Fair</option>
-                                    <option value="3">3 - Good</option>
-                                    <option value="4">4 - Very Good</option>
-                                    <option value="5">5 - Excellent</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary mt-2">Submit Rating</button>
-                        </form>
-                    @endauth
-
-                    <h5>Comments</h5>
-                    @forelse($article->comments as $comment)
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <p class="card-text">{{ $comment->content }}</p>
-                                <p class="card-text"><small class="text-muted">By {{ $comment->user->name }} on {{ $comment->created_at->format('M d, Y') }}</small></p>
-                            </div>
+                        <div class="mt-4">
+                            <h5>Rate this Article</h5>
+                            <form action="{{ route('articles.rate', $article->slug) }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <select name="rating" class="form-select" required>
+                                        <option value="">Select Rating</option>
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <option value="{{ $i }}">{{ $i }} Star{{ $i != 1 ? 's' : '' }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Rating</button>
+                            </form>
                         </div>
-                    @empty
-                        <p>No comments yet.</p>
-                    @endforelse
 
-                    @auth
-                        <form action="{{ route('articles.comment', $article) }}" method="POST" class="mt-3">
-                            @csrf
-                            <div class="form-group">
-                                <label for="comment">Add a comment:</label>
-                                <textarea name="comment" id="comment" rows="3" class="form-control" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary mt-2">Submit Comment</button>
-                        </form>
+                        <div class="mt-4">
+                            <h5>Leave a Comment</h5>
+                            <form action="{{ route('articles.comment', $article->slug) }}" method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <textarea name="content" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Comment</button>
+                            </form>
+                        </div>
                     @endauth
 
-                    <div class="mt-3">
-                        <a href="{{ route('articles.index') }}" class="btn btn-secondary">Back to Articles</a>
+                    <div class="mt-4">
+                        <h5>Comments</h5>
+                        @forelse($article->comments as $comment)
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="card-subtitle mb-2 text-muted">{{ $comment->user->name }}</h6>
+                                        <small class="text-muted">{{ $comment->created_at->format('M d, Y H:i') }}</small>
+                                    </div>
+                                    <p class="card-text">{{ $comment->content }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-muted">No comments yet.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.article-detail-img {
+    max-height: 400px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.article-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.star-rating {
+    font-size: 1.2rem;
+}
+</style>
 @endsection
 

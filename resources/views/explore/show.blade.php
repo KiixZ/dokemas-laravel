@@ -25,7 +25,7 @@
 
     <div class="row">
         <div class="col-md-8">
-            <img src="{{ asset('storage/' . $destination->image) }}" alt="{{ $destination->name }}" class="img-fluid mb-4">
+            <img src="{{ asset('public/storage/' . $destination->image) }}" alt="{{ $destination->name }}" class="img-fluid mb-4">
             <p>{{ $destination->description }}</p>
             
             <!-- User information -->
@@ -96,7 +96,7 @@
         <div class="row">
             @foreach($destination->gallery as $index => $image)
                 <div class="col-md-3 mb-4">
-                    <img src="{{ asset('storage/' . $image) }}" alt="Gallery image {{ $index + 1 }}" class="img-fluid gallery-img" data-bs-toggle="modal" data-bs-target="#galleryModal" data-bs-slide-to="{{ $index }}">
+                    <img src="{{ asset('public/storage/' . $image) }}" alt="Gallery image {{ $index + 1 }}" class="img-fluid gallery-img" data-bs-toggle="modal" data-bs-target="#galleryModal" data-bs-slide-to="{{ $index }}">
                 </div>
             @endforeach
         </div>
@@ -114,7 +114,7 @@
                             <div class="carousel-inner">
                                 @foreach($destination->gallery as $index => $image)
                                     <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                        <img src="{{ asset('storage/' . $image) }}" class="d-block w-100" alt="Gallery image {{ $index + 1 }}">
+                                        <img src="{{ asset('public/storage/' . $image) }}" class="d-block w-100" alt="Gallery image {{ $index + 1 }}">
                                     </div>
                                 @endforeach
                             </div>

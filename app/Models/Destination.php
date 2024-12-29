@@ -38,7 +38,7 @@ class Destination extends Model
         static::creating(function ($destination) {
             $destination->slug = $destination->generateUniqueSlug($destination->name);
             if (!$destination->user_id) {
-                $destination->user_id = auth()->id() ?? User::where('email', 'admin@example.com')->first()->id;
+                $destination->user_id = auth()->id();
             }
         });
 

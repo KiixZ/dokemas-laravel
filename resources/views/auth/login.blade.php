@@ -8,6 +8,13 @@
                 <div class="card-body p-4">
                     <h2 class="text-center mb-4" style="color: #008080;">Log In</h2>
 
+                    @if (session('status'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('status') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     @if (request()->get('verified'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             Terima kasih sudah verifikasi email. Silakan login.
