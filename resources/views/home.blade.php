@@ -14,34 +14,74 @@
 </div>
 
 <div class="container mt-5">
-    <!-- Latest Destinations Section -->
-    <h2 class="mb-4 fw-bold">Destinasi Terbaru</h2>
-    <div class="row" data-aos="fade-up" data-aos-duration="1000" data-aos-once="false">
-        <div class="col-lg-8">
-            <div class="row g-4">
-                @foreach($latestDestinations as $destination)
-                <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100" data-aos-once="false">
-                    
-                    <a href="{{ route('explore.show', $destination) }}" class="text-decoration-none">
-                        <div class="card h-100 border-0 shadow-sm">
+    <!-- Latest Featured Destinations Section -->
+    <div class="featured-destinations mb-5">
+        <h2 class="mb-4 fw-bold">
+            <i class="bi bi-star-fill text-warning"></i>
+            Destinasi Wisata Terbaru
+        </h2>
+        <div class="row g-4">
+            @foreach($featuredDestinations as $destination)
+            <div class="col-md-4" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="{{ $loop->index * 100 }}">
+                <a href="{{ route('explore.show', $destination) }}" class="text-decoration-none">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
                             @if($destination->image)
                                 <img src="{{ asset('public/storage/' . $destination->image) }}" class="card-img-top" alt="{{ $destination->name }}" style="height: 200px; object-fit: cover;">
                             @else
                                 <img src="{{ asset('images/placeholder.jpg') }}" class="card-img-top" alt="{{ $destination->name }}" style="height: 200px; object-fit: cover;">
                             @endif
-                            <div class="card-body">
-                                <span class="badge bg-dark mb-2">{{ $destination->category->name }}</span>
-                                <h5 class="card-title fw-bold text-dark">{{ $destination->name }}</h5>
-                                <p class="text-muted small mb-2">
-                                    <i class="bi bi-calendar-event"></i> 
-                                    {{ $destination->created_at->format('d M Y') }}
-                                </p>
-                                <p class="card-text text-muted">{{ Str::limit($destination->description, 100) }}</p>
+                            <div class="position-absolute top-0 start-0 bg-warning text-white px-3 py-2 m-2 rounded-pill">
+                                Featured
                             </div>
                         </div>
-                    </a>
+                        <div class="card-body">
+                            <span class="badge bg-dark mb-2">{{ $destination->category->name }}</span>
+                            <h5 class="card-title fw-bold">{{ $destination->name }}</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar-event"></i> 
+                                {{ $destination->created_at->format('d M Y') }}
+                            </p>
+                            <p class="card-text text-muted">{{ Str::limit($destination->description, 100) }}</p>
+                            <a href="{{ route('explore.show', $destination) }}" class="btn btn-link text-decoration-none p-0">Read More →</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    <div class="row" data-aos="fade-up" data-aos-duration="1000">
+        <!-- Latest Articles Section -->
+        <div class="col-lg-8">
+            <h2 class="mb-4 fw-bold">Artikel Terbaru</h2>
+            <div class="row g-4">
+                @foreach($latestArticles as $article)
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        @if($article->image)
+                            <img src="{{ asset('public/storage/' . $article->image) }}" class="card-img-top" alt="{{ $article->title }}" style="height: 200px; object-fit: cover;">
+                        @else
+                            <img src="{{ asset('images/placeholder.jpg') }}" class="card-img-top" alt="{{ $article->title }}" style="height: 200px; object-fit: cover;">
+                        @endif
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ $article->title }}</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar-event"></i> 
+                                {{ $article->created_at->format('d M Y') }}
+                            </p>
+                            <p class="card-text text-muted">{{ Str::limit($article->content, 100) }}</p>
+                            <a href="{{ route('articles.show', $article) }}" class="btn btn-link text-decoration-none p-0">Read More →</a>
+                        </div>
+                    </div>
                 </div>
                 @endforeach
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $latestArticles->links() }}
             </div>
         </div>
         
@@ -88,7 +128,7 @@
         </div>
     </div>
 
-    <!-- Main Content Sections -->
+    <!-- Tourism Promotion Section -->
     <div class="row align-items-center min-vh-75 py-5">
         <div class="col-lg-6 order-lg-1 order-2" 
              data-aos="fade-right"
@@ -115,15 +155,11 @@
             <a href="{{ route('newsletter.form') }}" class="btn btn-dark btn-lg px-4">Daftar Disini</a>
         </div>
     </div>
-
-    <!-- Rest of your existing sections -->
-    <!-- ... -->
 </div>
 @endsection
 
 @section('styles')
 <style>
-    /* Existing styles */
     body {
         background-color: #f8f9fa;
     }
@@ -131,7 +167,7 @@
     .hero-section {
         height: 100vh;
         background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                    url('https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&q=80') no-repeat center center;
+                    url('https://assets.promediateknologi.id/crop/0x0:0x0/750x500/webp/photo/2023/01/09/301616314.jpg') no-repeat center center;
         background-size: cover;
         position: relative;
     }
@@ -142,13 +178,13 @@
         padding-top: 100px !important;
     }
     
-    /* New styles for latest destinations and sidebar */
     .card {
-        transition: transform 0.2s ease-in-out;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
     
     .card:hover {
         transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
     
     .trending-list a:hover h6 {
@@ -164,7 +200,19 @@
         padding: 0.5em 1em;
     }
     
-    /* Responsive adjustments */
+    .featured-destinations .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .featured-destinations .card-img-top {
+        transition: transform 0.3s ease;
+    }
+    
+    .featured-destinations .card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
     @media (max-width: 991.98px) {
         .sidebar {
             margin-top: 2rem;
@@ -172,3 +220,4 @@
     }
 </style>
 @endsection
+

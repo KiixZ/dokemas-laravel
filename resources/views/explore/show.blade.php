@@ -61,7 +61,7 @@
                             <span class="text-muted">({{ $destination->ratings->count() }} ulasan)</span>
                         </div>
                     </div>
-                    <button class="btn btn-primary share-button d-flex align-items-center justify-content-center w-100 mt-3" onclick="shareDestination()">
+                    <button class="btn btn-dark share-button d-flex align-items-center justify-content-center w-100 mt-3" onclick="shareDestination()">
                         <i class="bi bi-share me-2"></i>
                         Share
                     </button>
@@ -154,7 +154,7 @@
     <div id="map" class="mb-4 rounded"></div>
     <div class="text-center mb-4">
         <a href="https://www.google.com/maps/search/?api=1&query={{ $destination->latitude }},{{ $destination->longitude }}" 
-           class="btn btn-primary" 
+           class="btn btn-dark" 
            target="_blank" 
            rel="noopener noreferrer">
             Buka di Google Maps
@@ -198,7 +198,7 @@
                     <div class="mb-3">
                         <textarea name="comment" rows="3" class="form-control" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Kirim Ulasan</button>
+                    <button type="submit" class="btn btn-dark">Kirim Ulasan</button>
                 </form>
             </div>
         </div>

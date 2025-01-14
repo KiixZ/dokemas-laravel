@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Destination;
+use App\Models\Article;
 use App\Models\Category;
+use App\Models\Destination;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Mengambil 6 destinasi terbaru
-        $latestDestinations = Destination::with(['category', 'ratings'])
+        // Mengambil 3 destinasi terbaru untuk featured destinations
+        $featuredDestinations = Destination::with(['category', 'ratings'])
             ->latest()
-            ->take(6)
+            ->take(3)
             ->get()
             ->map(function ($destination) {
                 $destination->average_rating = $destination->averageRating();
@@ -21,7 +22,6 @@ class HomeController extends Controller
             });
 
         // Mengambil 5 destinasi dengan rating tertinggi sebagai trending
-        // Karena belum ada kolom views, kita gunakan rating sebagai alternatif
         $trendingDestinations = Destination::with(['ratings'])
             ->get()
             ->sortByDesc(function ($destination) {
@@ -34,11 +34,16 @@ class HomeController extends Controller
             ->orderBy('destinations_count', 'desc')
             ->get();
 
-        return view('home', compact('latestDestinations', 'trendingDestinations', 'categories'));
+        // Mengambil 4 artikel terbaru dengan pagination
+        $latestArticles = Article::latest()->paginate(4);
+
+        return view('home', compact('featuredDestinations', 'trendingDestinations', 'categories', 'latestArticles'));
     }
+
 
     public function about()
     {
         return view('about');
     }
 }
+
