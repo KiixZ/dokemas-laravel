@@ -12,7 +12,7 @@ class ArticleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin,staff'])->except(['index', 'show']);
+        $this->middleware(['auth', 'role:admin,staff'])->except(['index', 'show', 'rate', 'comment']);
     }
 
     public function index()
@@ -115,6 +115,7 @@ class ArticleController extends Controller
         $article->load(['user', 'comments.user', 'ratings']);
         return view('articles.show', compact('article'));
     }
+
     public function rate(Request $request, Article $article)
     {
         $validated = $request->validate([
@@ -142,5 +143,16 @@ class ArticleController extends Controller
 
         return back()->with('success', 'Comment added successfully');
     }
-}
 
+    public function deleteComment(Article $article, $comment)
+    {
+        $comment = $article->comments()->findOrFail($comment);
+        
+        if ($comment->user_id !== auth()->id() && !auth()->user()->hasRole(['admin', 'staff'])) {
+            return back()->with('error', 'You are not authorized to delete this comment.');
+        }
+
+        $comment->delete();
+        return back()->with('success', 'Comment deleted successfully');
+    }
+}

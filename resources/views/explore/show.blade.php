@@ -4,6 +4,7 @@
 
 @section('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
 <style>
     #map { height: 300px; }
     .gallery-img {
@@ -16,6 +17,15 @@
     .star-rating {
         color: #ffc107;
     }
+    .share-button {
+        transition: all 0.3s ease;
+        background-color: black;
+        border: none;
+    }
+    .share-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
 </style>
 @endsection
 
@@ -25,9 +35,39 @@
 
     <div class="row">
         <div class="col-md-8">
-            <img src="{{ asset('public/storage/' . $destination->image) }}" alt="{{ $destination->name }}" class="img-fluid mb-4">
+            <img src="{{ asset('public/storage/' . $destination->image) }}" alt="{{ $destination->name }}" class="img-fluid rounded mb-4">
             <p>{{ $destination->description }}</p>
-            
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Informasi</h5>
+                    <p><strong>Kategori:</strong> {{ $destination->category->name }}</p>
+                    <p><strong>Harga:</strong> Rp {{ number_format($destination->price, 0, ',', '.') }}</p>
+                    <p><strong>Lokasi:</strong> {{ $destination->location }}</p>
+                    <div class="mb-3">
+                        <h6>Rating:</h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="star-rating">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= round($destination->ratings->avg('rating')))
+                                        <i class="fas fa-star"></i>
+                                    @else
+                                        <i class="far fa-star"></i>
+                                    @endif
+                                @endfor
+                            </div>
+                            <span class="fw-bold">{{ number_format($destination->ratings->avg('rating'), 1) }}</span>
+                            <span class="text-muted">({{ $destination->ratings->count() }} ulasan)</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary share-button d-flex align-items-center justify-content-center w-100 mt-3" onclick="shareDestination()">
+                        <i class="bi bi-share me-2"></i>
+                        Share
+                    </button>
+                </div>
+            </div>
+
             <!-- User information -->
             <div class="card mb-4">
                 <div class="card-body">
@@ -45,29 +85,6 @@
                     </p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">Informasi</h5>
-                    <p><strong>Kategori:</strong> {{ $destination->category->name }}</p>
-                    <p><strong>Harga:</strong> Rp {{ number_format($destination->price, 0, ',', '.') }}</p>
-                    <p><strong>Lokasi:</strong> {{ $destination->location }}</p>
-                    <div class="mb-3">
-                        <h6>Rating:</h6>
-                        <div class="star-rating">
-                            @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <= round($destination->ratings->avg('rating')))
-                                    <i class="fas fa-star"></i>
-                                @else
-                                    <i class="far fa-star"></i>
-                                @endif
-                            @endfor
-                            ({{ $destination->ratings->count() }} ulasan)
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             @auth
                 <div class="card mb-4">
@@ -83,7 +100,7 @@
                                 <option value="4">4 - Bagus</option>
                                 <option value="5">5 - Sangat Bagus</option>
                             </select>
-                            <button type="submit" class="btn btn-primary">Kirim Rating</button>
+                            <button type="submit" class="btn btn-dark w-100">Kirim Rating</button>
                         </form>
                     </div>
                 </div>
@@ -96,7 +113,7 @@
         <div class="row">
             @foreach($destination->gallery as $index => $image)
                 <div class="col-md-3 mb-4">
-                    <img src="{{ asset('public/storage/' . $image) }}" alt="Gallery image {{ $index + 1 }}" class="img-fluid gallery-img" data-bs-toggle="modal" data-bs-target="#galleryModal" data-bs-slide-to="{{ $index }}">
+                    <img src="{{ asset('public/storage/' . $image) }}" alt="Gallery image {{ $index + 1 }}" class="img-fluid gallery-img rounded" data-bs-toggle="modal" data-bs-target="#galleryModal" data-bs-slide-to="{{ $index }}">
                 </div>
             @endforeach
         </div>
@@ -134,7 +151,7 @@
     @endif
 
     <h2 class="mt-4 mb-3">Lokasi</h2>
-    <div id="map" class="mb-4"></div>
+    <div id="map" class="mb-4 rounded"></div>
     <div class="text-center mb-4">
         <a href="https://www.google.com/maps/search/?api=1&query={{ $destination->latitude }},{{ $destination->longitude }}" 
            class="btn btn-primary" 
@@ -148,16 +165,23 @@
     @forelse($destination->comments as $comment)
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title">
-                    @if($comment->user)
-                        {{ $comment->user->name }}
-                    @elseif($comment->user_id)
-                        Deleted User
-                    @else
-                        Unknown User
-                    @endif
-                </h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ $comment->created_at->format('d M Y H:i') }}</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <h5 class="card-title">
+                        @if($comment->user)
+                            {{ $comment->user->name }}
+                        @elseif($comment->user_id)
+                            Deleted User
+                        @else
+                            Unknown User
+                        @endif
+                    </h5>
+                    <small class="text-muted">{{ $comment->created_at->format('Y-m-d') }}</small>
+                </div>
+                <div class="mb-2">
+                    @for ($i = 1; $i <= 5; $i++)
+                        <i class="bi bi-star-fill {{ $i <= $comment->rating ? 'text-warning' : 'text-muted' }}"></i>
+                    @endfor
+                </div>
                 <p class="card-text">{{ $comment->content }}</p>
             </div>
         </div>
@@ -196,11 +220,6 @@
             .bindPopup('{{ $destination->name }}')
             .openPopup();
 
-        // Tambahkan event listener untuk membuka Google Maps saat marker diklik
-        map.on('click', function(e) {
-            window.open(`https://www.google.com/maps/search/?api=1&query=${e.latlng.lat},${e.latlng.lng}`, '_blank');
-        });
-
         // Initialize modal and carousel
         var galleryModal = new bootstrap.Modal(document.getElementById('galleryModal'));
         var galleryCarousel = new bootstrap.Carousel(document.getElementById('galleryCarousel'));
@@ -214,6 +233,25 @@
             });
         });
     });
+
+    function shareDestination() {
+        if (navigator.share) {
+            navigator.share({
+                title: '{{ $destination->name }}',
+                text: '{{ Str::limit($destination->description, 100) }}',
+                url: window.location.href
+            })
+            .catch((error) => console.log('Error sharing:', error));
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            alert('Link copied to clipboard!');
+        }
+    }
 </script>
 @endsection
-

@@ -6,7 +6,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Staff Registrations</h5>
+                    <h5 class="mb-0">Pengelola Registrations</h5>
                 </div>
 
                 <div class="card-body">

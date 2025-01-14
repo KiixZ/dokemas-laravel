@@ -138,9 +138,7 @@ class AdminController extends Controller
         }
 
         $destination->update($validatedData);
-
-        return redirect()->route('admin.destinations.index')
-            ->with('success', 'Destination updated successfully.');
+        return redirect()->route('admin.destinations.index')->with('success', 'Destination updated successfully');
     }
 
     public function destroyDestination(Destination $destination)

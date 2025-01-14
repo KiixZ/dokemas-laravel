@@ -232,9 +232,14 @@
         @media (max-width: 768px) {
             #sidebar {
                 margin-left: calc(-1 * var(--sidebar-width));
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1000;
             }
 
-            #sidebar.collapsed {
+            #sidebar.show {
                 margin-left: 0;
             }
 
@@ -243,13 +248,32 @@
                 width: 100%;
             }
 
-            #content.collapsed {
-                margin-left: var(--sidebar-width);
+            .sidebar-toggle-mobile {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1001;
+                background: var(--primary-color);
+                color: var(--text-color);
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar-toggle-mobile {
+                display: none;
             }
         }
     </style>
+
 </head>
 <body>
+    <button class="sidebar-toggle-mobile" id="sidebarToggleMobile">
+        <i class="fas fa-bars"></i>
+    </button>
     <div id="wrapper">
         <nav id="sidebar">
             <div class="sidebar-header">
@@ -268,50 +292,53 @@
                     </a>
                 </div>
             </div>
-
+            
             <div class="nav-section">
-                <h6 class="section-title">CONTENT</h6>
-                
-                <!-- Articles Dropdown -->
+                <h6 class="section-title">Artikel</h6>
                 <div class="nav-item">
-                    <div class="nav-link" onclick="toggleDropdown(this.parentElement)">
+                    <a href="{{ route('admin.articles.index') }}" class="nav-link">
                         <i class="fas fa-newspaper"></i>
-                        <span>Articles</span>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
-                    </div>
-                    <div class="nav-dropdown">
-                        <a href="{{ route('admin.articles.index') }}" class="nav-dropdown-item">All Articles</a>
-                        <a href="{{ route('admin.articles.create') }}" class="nav-dropdown-item">Add New</a>
-                    </div>
+                        <span>Semua Artikel</span>
+                    </a>
                 </div>
-
-                <!-- Categories Dropdown -->
                 <div class="nav-item">
-                    <div class="nav-link" onclick="toggleDropdown(this.parentElement)">
-                        <i class="fas fa-tags"></i>
-                        <span>Categories</span>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
-                    </div>
-                    <div class="nav-dropdown">
-                        <a href="{{ route('admin.categories.index') }}" class="nav-dropdown-item">All Categories</a>
-                        <a href="{{ route('admin.categories.create') }}" class="nav-dropdown-item">Add New</a>
-                    </div>
-                </div>
-
-                <!-- Destinations Dropdown -->
-                <div class="nav-item">
-                    <div class="nav-link" onclick="toggleDropdown(this.parentElement)">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Destinations</span>
-                        <i class="fas fa-chevron-down dropdown-icon"></i>
-                    </div>
-                    <div class="nav-dropdown">
-                        <a href="{{ route('admin.destinations.index') }}" class="nav-dropdown-item">All Destinations</a>
-                        <a href="{{ route('admin.destinations.create') }}" class="nav-dropdown-item">Add New</a>
-                    </div>
+                    <a href="{{ route('admin.articles.create') }}" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Tambah Artikel</span>
+                    </a>
                 </div>
             </div>
-            @if(Auth::user()->role === 'admin')
+            <div class="nav-section">
+                <h6 class="section-title">Kategori</h6>
+                <div class="nav-item">
+                    <a href="{{ route('admin.categories.index') }}" class="nav-link">
+                        <i class="fas fa-tags"></i>
+                        <span>Semua Kategori</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ route('admin.categories.create') }}" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Tambah Kategori</span>
+                    </a>
+                </div>
+            </div>
+            <div class="nav-section">
+                <h6 class="section-title">Destinasi</h6>
+                <div class="nav-item">
+                    <a href="{{ route('admin.destinations.index') }}" class="nav-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Semua Destinasi</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{{ route('admin.destinations.create') }}" class="nav-link">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Tambah Destinasi</span>
+                    </a>
+                </div>
+            </div>
+
             <div class="nav-section">
                 <h6 class="section-title">ADMIN</h6>
                 <div class="nav-item">
@@ -327,7 +354,7 @@
                     </a>
                 </div>
             </div>
-            @endif
+
             <div class="nav-section mt-auto">
                 <div class="nav-item">
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">
@@ -392,27 +419,40 @@
             dropdown.classList.toggle('show');
             navItem.classList.toggle('active');
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebar');
             const content = document.getElementById('content');
             const sidebarCollapse = document.getElementById('sidebarCollapse');
+            const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
 
-            sidebarCollapse.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
+            function toggleSidebar() {
+                sidebar.classList.toggle('show');
                 content.classList.toggle('collapsed');
-            });
+            }
+
+            sidebarCollapse.addEventListener('click', toggleSidebar);
+            sidebarToggleMobile.addEventListener('click', toggleSidebar);
 
             // Handle mobile responsiveness
             function checkWidth() {
                 if (window.innerWidth <= 768) {
-                    sidebar.classList.add('collapsed');
+                    sidebar.classList.remove('show');
+                    content.classList.remove('collapsed');
+                } else {
+                    sidebar.classList.remove('show');
                     content.classList.remove('collapsed');
                 }
             }
 
             window.addEventListener('resize', checkWidth);
             checkWidth(); // Initial check
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768 && !sidebar.contains(event.target) && !sidebarToggleMobile.contains(event.target)) {
+                    sidebar.classList.remove('show');
+                }
+            });
         });
     </script>
     @yield('scripts')

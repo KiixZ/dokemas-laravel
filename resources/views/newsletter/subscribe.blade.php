@@ -7,9 +7,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <h2 class="card-title">Daftar Sebagai Staff</h2>
+                        <h2 class="card-title">Daftar Sebagai Pengelola Wisata</h2>
                         <p class="text-muted">
-                            Isi formulir di bawah ini untuk mendaftar sebagai staff dan mulai mempromosikan tempat wisata Anda.
+                            Isi formulir di bawah ini untuk mendaftar sebagai pengelola wisata dan mulai mempromosikan tempat wisata Anda.
                         </p>
                     </div>
 

@@ -10,76 +10,139 @@
             
             <div class="row align-items-center mb-5">
                 <div class="col-md-6">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Our Team" class="img-fluid rounded shadow-sm">
+                    <img src="{{ asset('public/images/logo.svg') }}" alt="Our Team" class="img-fluid rounded shadow-sm">
                 </div>
                 <div class="col-md-6">
-                    <h2 class="mb-4">Our Mission</h2>
-                    <p class="lead">We are passionate about helping travelers discover the world's most amazing destinations. Our team of experienced travel enthusiasts curates the best travel content and destination information to inspire your next adventure.</p>
-                </div>
-            </div>
-
-            <div class="row mb-5">
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title">Expert Curation</h3>
-                            <p class="card-text">Our team of travel experts handpicks the best destinations, accommodations, and experiences to ensure you have an unforgettable journey.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title">Community-Driven</h3>
-                            <p class="card-text">We believe in the power of shared experiences. Our platform allows travelers to connect, share tips, and inspire each other.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title">Sustainable Travel</h3>
-                            <p class="card-text">We promote responsible tourism practices to ensure that the destinations we love remain beautiful for generations to come.</p>
-                        </div>
-                    </div>
+                    <h2 class="mb-4">Tentang Dokemas</h2>
+                    <p class="lead">DOKEMAS adalah sebuah platform yang mampu memberikan informasi kepada wisatawan untuk mencari wisata di wilayah Banyumasan. Dengan dibangunnya sistem berbasis website, diharapkan akan memudahkan wisatawan untuk berwisata ke objek wisata di wilayah Banyumas dan Sekitarnya.</p>
                 </div>
             </div>
 
             <div class="text-center mb-5">
-                <h2 class="mb-4">Our Team</h2>
-                <p class="lead">Meet the passionate individuals behind Tourism App who work tirelessly to bring you the best travel experiences.</p>
+                <h2 class="mb-4">Team Developer</h2>
             </div>
 
-            <div class="row">
+            <div class="row justify-content-center" id="team-members-container">
                 @php
                 $team_members = [
-                    ['name' => 'Rifki Saputra', 'position' => 'Founder & CEO', 'image' => 'team-member-1.png'],
-                    ['name' => 'John Smith', 'position' => 'Head of Content', 'image' => 'team-member-2.jpg'],
-                    ['name' => 'Emily Brown', 'position' => 'Travel Expert', 'image' => 'team-member-3.jpg'],
-                    ['name' => 'Michael Johnson', 'position' => 'Community Manager', 'image' => 'team-member-4.jpg'],
+                    [
+                        'name' => 'Rifki Saputra',
+                        'position' => 'Fullstuck Developer',
+                        'image' => 'gweh.jpg',
+                        'github' => 'https://github.com/KiixZ/',
+                        'linkedin' => 'https://www.linkedin.com/in/rifkiisaputra/',
+                        'instagram' => 'https://instagram.com/rsptrkk'
+                    ],
+                    
                 ];
                 @endphp
 
                 @foreach($team_members as $member)
-                <div class="col-md-3 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <img src="{{ asset('storage/images/' . $member['image']) }}" alt="{{ $member['name'] }}" class="card-img-top">
-                        <div class="card-body">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card text-center shadow-sm h-100">
+                        <img src="{{ asset('public/images/' . $member['image']) }}" alt="{{ $member['name'] }}" class="card-img-top">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ $member['name'] }}</h5>
                             <p class="card-text">{{ $member['position'] }}</p>
+                            <div class="social-links mt-auto">
+                                <a href="{{ $member['github'] }}" class="social-link" target="_blank" title="GitHub">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="{{ $member['linkedin'] }}" class="social-link" target="_blank" title="LinkedIn">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                <a href="{{ $member['instagram'] }}" class="social-link" target="_blank" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 @endforeach
             </div>
-
-            <div class="text-center mt-5">
-                <h2 class="mb-4">Join Our Community</h2>
-                <p class="lead mb-4">Be part of our growing community of travel enthusiasts. Sign up now to get exclusive travel tips, destination guides, and special offers!</p>
-                <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Sign Up Now</a>
-            </div>
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+    background-color: #333;
+    color: #fff;
+}
+
+.social-link i {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 767.98px) {
+    #team-members-container {
+        justify-content: center;
+    }
+    
+    #team-members-container > div {
+        width: 80%;
+        max-width: 300px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('team-members-container');
+    const members = container.children;
+    
+    if (members.length === 1) {
+        members[0].classList.remove('col-lg-3', 'col-md-4', 'col-sm-6');
+        members[0].classList.add('col-md-6', 'col-sm-8');
+    } else if (members.length === 2) {
+        Array.from(members).forEach(member => {
+            member.classList.remove('col-lg-3', 'col-md-4');
+            member.classList.add('col-md-6');
+        });
+    } else if (members.length === 3) {
+        Array.from(members).forEach(member => {
+            member.classList.remove('col-lg-3');
+            member.classList.add('col-md-4');
+        });
+    }
+});
+</script>
 @endsection
 

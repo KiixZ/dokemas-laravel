@@ -92,5 +92,9 @@ class Destination extends Model
     {
         return $this->ratings()->avg('rating') ?: 0;
     }
+    public function incrementViews()
+    {
+        $this->increment('views');
+    }
 }
 

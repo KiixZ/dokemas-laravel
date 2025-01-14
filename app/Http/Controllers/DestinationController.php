@@ -42,7 +42,8 @@ class DestinationController extends Controller
     {
         $destination->load('ratings', 'comments.user', 'category', 'user');
         $destination->gallery = $destination->gallery ?? [];
-        
+        $destination->incrementViews();
+    
         return view('explore.show', compact('destination'));
     }
 
@@ -247,5 +248,6 @@ class DestinationController extends Controller
 
         return back()->with('success', 'Comment added successfully');
     }
+    
 }
 

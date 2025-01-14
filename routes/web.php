@@ -43,7 +43,7 @@ Route::get('/about', [HomeController::class, 'about'])->name('about');
 // Article Routes
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
-
+Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
 // Explore Routes
 Route::get('/explore', [DestinationController::class, 'index'])->name('explore.index');
 Route::get('/explore/{destination:slug}', [DestinationController::class, 'show'])->name('explore.show');
@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Article Interactions
     Route::post('/articles/{article}/rate', [ArticleController::class, 'rate'])->name('articles.rate');
     Route::post('/articles/{article}/comment', [ArticleController::class, 'comment'])->name('articles.comment');
+    Route::delete('/articles/{article}/comments/{comment}', [ArticleController::class, 'deleteComment'])->name('articles.comments.delete');
 
     // Destination Interactions
     Route::post('/explore/{destination:slug}/rate', [DestinationController::class, 'rate'])->name('explore.rate');
